@@ -66,7 +66,7 @@ The purpose of this project is to design a database and use server-side JavaScri
 * `styles` contains all of the sass files. 
 * `server.js` is the entry point to the application. This connects the routes to the database.
 
-## final product
+## ERD
 
 !["ERD"](LightBnB_WebApp/ERD/ERD.png)
 
