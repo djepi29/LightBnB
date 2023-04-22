@@ -68,7 +68,7 @@ The purpose of this project is to design a database and use server-side JavaScri
 
 ## final product
 
-!["ERD"](/Users/djepi/LightBnB/LightBnB_WebApp/ERD/ERD.png)
+!["ERD"](LightBnB_WebApp/ERD/ERD.png)
 
 ## Getting Started
 
