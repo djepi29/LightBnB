@@ -90,11 +90,14 @@ const getAllReservations = function (guest_id, limit = 10) {
 const getAllProperties = function (options, limit) {
   const queryParams = [];
 
-  let queryString = `
-  SELECT properties.*, avg(property_reviews.rating) as average_rating
-  FROM properties
-  JOIN property_reviews ON properties.id = property_id
-  `;
+  let queryString = `SELECT * FROM properties
+  WHERE id IN (
+    SELECT property_id FROM (
+      SELECT property_id, AVG(rating) AS avg_rating FROM property_reviews
+      GROUP BY property_id
+    ) AS property_ratings
+    WHERE avg_rating >= :minimum_rating
+  )`;
 
   if (options.city) {
     queryParams.push(`%${options.city}%`);
