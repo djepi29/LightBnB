@@ -7,7 +7,7 @@
 -- ORDER BY cost_per_night
 -- LIMIT 10
 
-SELECT properties.id, title, cost_per_night, avg(property_reviews.rating) as average_rating
+SELECT properties.id, title, cost_per_night, ROUND(avg(property_reviews.rating),1) as average_rating
 FROM properties
 LEFT JOIN property_reviews ON properties.id = property_id
 WHERE city LIKE '%ancouv%'
