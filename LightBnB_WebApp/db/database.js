@@ -12,7 +12,6 @@ const getUserWithEmail = function (email) {
   return pool
   .query(`SELECT * FROM users WHERE users.email = $1`, [email])
   .then((result) => {
-    // console.log(`results:`,result.rows);
     return result.rows[0];
   })
   .catch((error) => console.log(error.message))
@@ -60,7 +59,6 @@ const getAllReservations = function (guest_id, limit = 10) {
 
 };
 
-/// Properties
 
 
 // adding conditions
