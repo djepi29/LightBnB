@@ -96,7 +96,6 @@ const getAllProperties = function (options, limit) {
       SELECT property_id, AVG(rating) AS avg_rating FROM property_reviews
       GROUP BY property_id
     ) AS property_ratings
-    WHERE avg_rating >= :minimum_rating
   )`;
 
   if (options.city) {
