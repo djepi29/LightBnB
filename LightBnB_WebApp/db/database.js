@@ -8,6 +8,7 @@ const pool = new Pool({
   database: 'lightbnb'
 });
 
+// Function to get a user by email from the database
 const getUserWithEmail = function (email) {
   return pool
   .query(`SELECT * FROM users WHERE users.email = $1`, [email])
@@ -17,7 +18,7 @@ const getUserWithEmail = function (email) {
   .catch((error) => console.log(error.message))
 };
 
-
+// Function to get a user by ID from the database
 const getUserWithId = function (id) {
   return pool
   .query(`SELECT * FROM users WHERE users.id = $1`, [id])
@@ -28,7 +29,7 @@ const getUserWithId = function (id) {
   .catch((error) => console.log(error.message))
 };
 
-
+// Function to add a new user to the database
 const addUser = function (user) {
   return pool.query(`INSERT INTO users (name, email, password) VALUES ($1,$2,$3) RETURNING *`,[user.name, user.email, user.password])
   .then((results) => 
@@ -37,7 +38,7 @@ const addUser = function (user) {
 };
 
 /// Reservations
-
+// Function to get all reservations for a specific guest from the database
 const getAllReservations = function (guest_id, limit = 10) {
   const params = [guest_id, limit]
   const queryString= `SELECT properties.*, reservations.*, avg(rating) as average_rating
@@ -61,12 +62,14 @@ const getAllReservations = function (guest_id, limit = 10) {
 
 
 
-// adding conditions
+// Function to get all properties based on search options from the database
 const getAllProperties = function (options, limit) {
   const queryParams = [];
 
 
   let queryString = `SELECT properties.* , AVG(property_reviews.rating) as average_rating FROM properties JOIN property_reviews ON properties.id = property_id WHERE 1=1`
+
+  // Check for search options and add corresponding conditions to the query
   if (options.city) {
     queryParams.push(`%${options.city}%`);
     queryString += `AND city LIKE $${queryParams.length} `;
@@ -106,7 +109,7 @@ const getAllProperties = function (options, limit) {
   return pool.query(queryString, queryParams).then((res) => res.rows);
 };
 
-
+// Function to add a new property to the database
  const addProperty = function (property) {
   const queryParams = [ property.owner_id, property.title, property.description, property.thumbnail_photo_url, property.cover_photo_url, property.cost_per_night * 100, property.street, property.city, property.province, property.post_code, property.country, property.parking_spaces, property.number_of_bathrooms, property.number_of_bedrooms];
 
@@ -119,6 +122,7 @@ const getAllProperties = function (options, limit) {
   return pool.query(queryString, queryParams).then((res) => res.rows[0]);
 };
 
+// Exporting the functions to be used in other modules
 module.exports = {
   getUserWithEmail,
   getUserWithId,
