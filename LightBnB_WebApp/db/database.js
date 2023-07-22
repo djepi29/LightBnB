@@ -67,7 +67,12 @@ const getAllProperties = function (options, limit) {
   const queryParams = [];
 
 
-  let queryString = `SELECT properties.* , AVG(property_reviews.rating) as average_rating FROM properties JOIN property_reviews ON properties.id = property_id WHERE 1=1`
+  let queryString = `SELECT properties.*, AVG(property_reviews.rating) as average_rating
+  FROM properties
+  JOIN property_reviews ON properties.id = property_id
+  WHERE 1=1
+  GROUP BY properties.id`;
+  
 
   // Check for search options and add corresponding conditions to the query
   if (options.city) {
