@@ -3,6 +3,7 @@ const database = require("../db/database");
 
 const router = express.Router();
 
+// Route to get all properties based on search options
 router.get("/properties", (req, res) => {
   database
     .getAllProperties(req.query, 20)
@@ -13,6 +14,7 @@ router.get("/properties", (req, res) => {
     });
 });
 
+// Route to get all reservations for a specific user
 router.get("/reservations", (req, res) => {
   const userId = req.session.userId;
   if (!userId) {
@@ -28,6 +30,7 @@ router.get("/reservations", (req, res) => {
     });
 });
 
+// Route to add a new property to the database
 router.post("/properties", (req, res) => {
   const userId = req.session.userId;
   if (!userId) {
