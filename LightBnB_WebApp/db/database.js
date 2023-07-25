@@ -41,7 +41,7 @@ const addUser = function (user) {
 // Function to get all reservations for a specific guest from the database
 const getAllReservations = function (guest_id, limit = 10) {
   const params = [guest_id, limit]
-  const queryString= `SELECT properties.*, reservations.*, avg(rating) as average_rating
+  const queryString= `SELECT properties.*, reservations.*, AVG(property_reviews.rating) as average_rating
   FROM reservations
   JOIN properties ON reservations.property_id = properties.id
   JOIN property_reviews ON properties.id = property_reviews.property_id
@@ -63,21 +63,19 @@ const getAllReservations = function (guest_id, limit = 10) {
 
 
 // Function to get all properties based on search options from the database
-const getAllProperties = function (options, limit) {
+const getAllProperties = function (options, limit = 10) {
   const queryParams = [];
 
 
   let queryString = `SELECT properties.*, AVG(property_reviews.rating) as average_rating
   FROM properties
   JOIN property_reviews ON properties.id = property_id
-  WHERE 1=1
-  GROUP BY properties.id`;
-  
+  WHERE 1=1 `;
 
   // Check for search options and add corresponding conditions to the query
   if (options.city) {
     queryParams.push(`%${options.city}%`);
-    queryString += `AND city LIKE $${queryParams.length} `;
+    queryString += `AND city ILIKE $${queryParams.length} `;
   }
 
   if (options.owner_id) {
@@ -98,10 +96,10 @@ const getAllProperties = function (options, limit) {
     queryString += `AND cost_per_night <= $${queryParams.length} `;
   }
 
-  queryString += `GROUP BY properties.id`
+  queryString += `GROUP BY properties.id`;
   if (options.minimum_rating) {
     queryParams.push(options.minimum_rating);
-    queryString += `HAVING AVG(rating) >= $${queryParams.length} `;
+    queryString += ` HAVING AVG(property_reviews.rating) >= $${queryParams.length} `;
   }
 
   queryParams.push(limit);
@@ -110,7 +108,7 @@ const getAllProperties = function (options, limit) {
   LIMIT $${queryParams.length};
   `;
 
-
+// console.log(queryString)
   return pool.query(queryString, queryParams).then((res) => res.rows);
 };
 
@@ -136,3 +134,6 @@ module.exports = {
   getAllProperties,
   addProperty,
 };
+
+
+// if (options.city) {     queryParams.push(%${options.city}%);ILIKE for case insensitivity     queryString += AND city ILIKE $${queryParams.length} ;   }    if (options.owner_id) {     queryParams.push(${options.owner_id});     queryString += AND owner_id = $${queryParams.length} ;   }    if (options.minimum_price_per_night) {     queryParams.push(${options.minimum_price_per_night * 100});     queryString += AND cost_per_night >= $${queryParams.length} ;   }    if (options.maximum_price_per_night) {     queryParams.push(${options.maximum_price_per_night * 100});     queryString += AND cost_per_night <= $${queryParams.length} ;   }    queryString += GROUP BY properties.id ;    if (options.minimum_rating) {     queryParams.push(${options.minimum_rating});     queryString += HAVING avg(property_reviews.rating) >= $${queryParams.length} ;   }
